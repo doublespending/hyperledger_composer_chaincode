@@ -1,0 +1,36 @@
+/**
+ * business network definition.
+ */
+namespace org.acme.sample
+
+participant Company identified by companyID{
+  o String companyID
+}
+
+asset User identified by userID {
+  //create your Team asset model
+  o String userID
+  o String pubKey
+  
+  o String baiduCredit
+  o Boolean baiduOk
+  
+  o String alibabaCredit
+  o Boolean alibabaOk
+  
+  o String tengxunCredit
+  o Boolean tengxunOk
+  
+  o Integer num
+  o String sum
+}
+
+transaction SetCredit {
+  //create your SetSensorTemp transaction model
+  --> User target
+  o String instrument
+  o String credit
+}
+
+
+

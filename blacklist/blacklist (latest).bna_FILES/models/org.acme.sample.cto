@@ -1,0 +1,59 @@
+/**
+ * business network definition.
+ */
+namespace org.acme.sample
+
+participant Company identified by companyID{
+  o String companyID
+  --> BlackList myList
+}
+
+participant Government identified by governmentID{
+  o String governmentID
+  --> WhiteList myList
+}
+
+asset BlackList identified by companyID {
+  o String companyID
+  o String[] data optional
+}
+
+asset WhiteList identified by governmentID {
+  o String governmentID
+  o String[] data optional
+}
+
+transaction BlackListAppend {
+  //create your SetSensorTemp transaction model
+  --> BlackList target
+  o String newElement
+}
+
+transaction WhiteListAppend {
+  //create your SetSensorTemp transaction model
+  --> WhiteList target
+  o String newElement
+}
+
+transaction ListDelete{
+  --> BlackList target
+  o String deleteElement
+}
+
+/*
+transaction CreatorUpdateList {
+  --> BlackList target
+  o String[] newList
+}
+
+transaction Clear{
+  --> BlackList target
+}
+
+transaction ListDelete{
+  --> BlackList target
+  o String deleteElement
+}
+*/
+
+
