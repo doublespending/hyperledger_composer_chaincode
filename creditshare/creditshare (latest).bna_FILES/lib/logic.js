@@ -15,6 +15,7 @@ asset User identified by userID {
   
   o Integer num
   o String sum
+  o String nsquare
 }
 
 transaction SetCredit {
@@ -26,17 +27,30 @@ transaction SetCredit {
 
  */
 
-function sumStrings(a,b){
-    var res='', c=0;
-    a = a.split('');
-    b = b.split('');
-    while (a.length || b.length || c){
-        c += ~~a.pop() + ~~b.pop();
-        res = c % 10 + res;
-        c = c>9;
+// Paillier Alogrithm: http://blog.csdn.net/jason_cuijiahui/article/details/79121702
+// npm install big-integer
+
+// Decrypted(a, n)+Decrypted(b, n) == Decrypted(sumString(a, b, n))
+function sumStrings(a, b, n){
+    var len = a.length
+    var numA = bigInt(a, 16);
+    var numB = bigInt(b, 16); 
+    var nsquare = bigInt(n, 16);
+    var preResult = numA.add(numB);
+    
+    var numsResult = preResult.divmod(nsquare);
+    var numResult = numResult['remainder'];
+    var result = numResult.toString(16);
+
+    while(result.length < len){
+      result = '0'+result;
     }
-    return res.replace(/^0+/,'');
+
+    return result;
 }
+
+
+
 
 function onSetCredit(setCredit) {
     if(setCredit.instrument=="baidu"){
@@ -65,9 +79,10 @@ function onSetCredit(setCredit) {
     }
     
     setCredit.target.sum = '0';
-    if(setCredit.target.baiduOk) setCredit.target.sum = sumStrings(setCredit.target.sum, setCredit.target.baiduCredit);
-    if(setCredit.target.alibabaOk) setCredit.target.sum = sumStrings(setCredit.target.sum, setCredit.target.alibabaCredit);
-    if(setCredit.target.tengxunOk) setCredit.target.sum = sumStrings(setCredit.target.sum, setCredit.target.tengxunCredit);
+    nsquare = setCredit.target.nsquare;
+    if(setCredit.target.baiduOk) setCredit.target.sum = sumStrings(setCredit.target.sum, setCredit.target.baiduCredit, nsquare);
+    if(setCredit.target.alibabaOk) setCredit.target.sum = sumStrings(setCredit.target.sum, setCredit.target.alibabaCredit, nsquare);
+    if(setCredit.target.tengxunOk) setCredit.target.sum = sumStrings(setCredit.target.sum, setCredit.target.tengxunCredit, nsquare);
   
     // renew 
     return getAssetRegistry('org.acme.sample.User')
